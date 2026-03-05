@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import './Gallery.css';
 
@@ -24,7 +24,7 @@ const Gallery = () => {
   const loadImages = async () => {
     try {
       for (const category of ['faculty', '8th', '9th', '10th']) {
-        const res = await axios.get(`/api/gallery?category=${category}`);
+        const res = await api.get(`/api/gallery?category=${category}`);
         setImages(prev => ({ ...prev, [category]: res.data }));
       }
     } catch (err) {
@@ -49,7 +49,7 @@ const Gallery = () => {
 
     setLoading(true);
     try {
-      await axios.post('/api/gallery/upload', formData, {
+      await api.post('/api/gallery/upload', formData, {
         headers: {
           'Authorization': `Bearer ${auth.token}`,
           'Content-Type': 'multipart/form-data'
@@ -67,7 +67,7 @@ const Gallery = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this image?')) return;
     try {
-      await axios.delete(`/api/gallery/${id}`, {
+      await api.delete(`/api/gallery/${id}`, {
         headers: { 'Authorization': `Bearer ${auth.token}` }
       });
       setMessage('Image deleted');

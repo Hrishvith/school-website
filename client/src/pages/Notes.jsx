@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import './Notes.css';
 
@@ -25,7 +25,7 @@ const Notes = () => {
   const loadNotes = async () => {
     try {
       for (const standard of ['8th', '9th', '10th']) {
-        const res = await axios.get(`/api/notes?standard=${standard}`);
+        const res = await api.get(`/api/notes?standard=${standard}`);
         const notesMap = {};
         subjects.forEach(subj => {
           notesMap[subj] = res.data.filter(n => n.subject === subj);
@@ -56,7 +56,7 @@ const Notes = () => {
 
     setLoading(true);
     try {
-      await axios.post('/api/notes/upload', formData, {
+      await api.post('/api/notes/upload', formData, {
         headers: {
           'Authorization': `Bearer ${auth.token}`,
           'Content-Type': 'multipart/form-data'
@@ -74,7 +74,7 @@ const Notes = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this note?')) return;
     try {
-      await axios.delete(`/api/notes/${id}`, {
+      await api.delete(`/api/notes/${id}`, {
         headers: { 'Authorization': `Bearer ${auth.token}` }
       });
       setMessage('Note deleted');

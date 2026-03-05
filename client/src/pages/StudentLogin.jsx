@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import './Auth.css';
 
@@ -23,7 +23,7 @@ const StudentLogin = () => {
 
     try {
       const endpoint = isLogin ? '/api/students/login' : '/api/students/register';
-      const res = await axios.post(endpoint, formData);
+      const res = await api.post(endpoint, formData);
       
       if (isLogin) {
         login(res.data.token, res.data.role, res.data.name);
