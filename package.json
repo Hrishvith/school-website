@@ -1,0 +1,28 @@
+{
+  "name": "school-website",
+  "version": "1.0.0",
+  "description": "MERN School Website - Full Stack Application",
+  "main": "server/index.js",
+  "scripts": {
+    "install-all": "cd server && npm install && cd ../client && npm install",
+    "start": "cd server && node index.js",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npx vite",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm run build",
+    "build-all": "cd server && npm install && cd ../client && npm install && npm run build"
+  },
+  "keywords": [
+    "MERN",
+    "School",
+    "React",
+    "Node",
+    "Express",
+    "MongoDB"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}

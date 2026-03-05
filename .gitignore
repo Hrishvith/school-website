@@ -1,0 +1,117 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Production build
+/dist
+/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (local development)
+server/uploads/gallery/*
+server/uploads/notes/*
+!server/uploads/gallery/.gitkeep
+!server/uploads/notes/.gitkeep
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables file
+.env.local
+.env.*.local
+
+# Exclude all parent directories and system files
+../*
+../../*
+/../*
+/../../*
+Application\ Data/
+Cookies/
+Local\ Settings/
+My\ Documents/
+NetHood/
+PrintHood/
+Recent/
+SendTo/
+Start\ Menu/
+Templates/
+*.DAT
+*.LOG1
+*.LOG2
+*.ini
+*.blf
+*.regtrans-ms
+3D\ Objects/
+AndroidStudioProjects/
+AppData/
+Contacts/
+Documents/
+Downloads/
+Favorites/
+IntelGraphicsProfiles/
+Links/
+Music/
+NTUSER.DAT*
+OneDrive/
+Pictures/
+PyCharmMiscProject/
+Saved\ Games/
+Searches/
+Untitled-1.c
+Videos/
+VirtualBox\ VMs/
+ait_mern/
+android\ studio/
+cprog
+eclipse-workspace/
+eclipse/
+miniconda3/
+my-app/
+ntuser.dat*
+.EasyOCR/
+.VirtualBox/
+.anaconda/
+.android/
+.bash_history
+.chocolatey/
+.codeium/
+.conda/
+.copilot/
+.eclipse/
+.emulator_console_auth_token
+.gitconfig
+.gradle/
+.ipynb/
+.m2/
+.matplotlib/
+.node_repl_history
+.p2/
+.redhat/
+.th-client/
+.vscode/
+New\ folder/
