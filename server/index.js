@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const crypto = require('crypto');
 const path = require('path');
 
 dotenv.config();
@@ -9,29 +11,19 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// CORS Configuration for both local and production
-const corsOptions = {
-  origin: function(origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001',
-      'http://127.0.0.1:3002',
-      process.env.FRONTEND_URL // for production on Render
-    ].filter(Boolean);
-    
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-};
+// ensure upload directories exist (multer fails if they are missing)
+['uploads/gallery', 'uploads/notes'].forEach((dir) => {
+  fs.mkdirSync(path.join(__dirname, dir), { recursive: true });
+});
 
-app.use(cors(corsOptions));
+// CORS: the API is consumed via same-origin requests (Vite dev proxy) or by
+// deployed frontends, so we reflect the request origin. Auth uses Bearer tokens
+// (no cookies), so permissive CORS is safe here. Set FRONTEND_URL to restrict.
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || true,
+  })
+);
 
 // static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -48,17 +40,45 @@ app.use('/api/students', studentRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/notes', notesRoutes);
 
-
-const PORT = process.env.PORT || 5000;
-
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err.message);
-    console.log('Server starting without database connection...');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT} (Database not connected)`));
+// health check: 200 + db status when the app is up
+app.get('/api/health', (req, res) => {
+  res.json({
+    ok: true,
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    uptime: process.uptime(),
   });
+});
+
+
+// BACKEND_PORT keeps the API on a fixed port (5000) so the injected PORT
+// can be reserved for the Vite dev server when running the fullstack dev script.
+const PORT = process.env.BACKEND_PORT || 5000;
+const hasMongoUri = Boolean(process.env.MONGO_URI);
+
+// Dev fallback: without JWT_SECRET, logins would crash. Generate a random secret
+// per boot (sessions reset on restart). Set JWT_SECRET in production for stable tokens.
+if (!process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = crypto.randomBytes(32).toString('hex');
+  console.log('JWT_SECRET not set - generated a temporary secret (sessions reset on restart)');
+}
+
+const startServer = () => {
+  app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
+};
+
+if (hasMongoUri) {
+  mongoose
+    .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+      console.log('Connected to MongoDB');
+      startServer();
+    })
+    .catch((err) => {
+      console.error('MongoDB connection error:', err.message);
+      console.log('Server starting without database connection...');
+      startServer();
+    });
+} else {
+  console.log('MONGO_URI not set - server starting without database connection');
+  startServer();
+}

@@ -1,15 +1,24 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const backendTarget = `http://localhost:${process.env.BACKEND_PORT || 5000}`;
+
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
+    host: '0.0.0.0',
+    port: Number(process.env.PORT) || 3000,
+    strictPort: true,
+    // allow the sandbox preview domain (Vite blocks unknown hosts by default)
+    allowedHosts: ['.e2b.app'],
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: backendTarget,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      },
+      '/uploads': {
+        target: backendTarget,
+        changeOrigin: true,
       }
     }
   },

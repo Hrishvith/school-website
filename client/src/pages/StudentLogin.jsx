@@ -27,7 +27,7 @@ const StudentLogin = () => {
       
       if (isLogin) {
         login(res.data.token, res.data.role, res.data.name);
-        navigate('/notes');
+        navigate('/home');
       } else {
         setMessage('Registration successful! Please login.');
         setIsLogin(true);

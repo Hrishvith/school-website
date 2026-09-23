@@ -16,24 +16,20 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container nav-container">
         <div className="logo">
-          <Link to="/">School</Link>
+          <Link to={auth.token ? '/home' : '/'}>School</Link>
         </div>
         <ul className="nav-links">
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/about">About</Link></li>
-          <li><Link to="/gallery">Gallery</Link></li>
-          <li><Link to="/notes">Notes</Link></li>
-          {!auth.token && (
+          {auth.token ? (
             <>
-              <li><Link to="/teacher-login">Teacher Login</Link></li>
-              <li><Link to="/student-login">Student Login</Link></li>
-            </>
-          )}
-          {auth.token && (
-            <>
+              <li><Link to="/home">Home</Link></li>
+              <li><Link to="/about">About</Link></li>
+              <li><Link to="/gallery">Gallery</Link></li>
+              <li><Link to="/notes">Notes</Link></li>
               <li className="welcome">Welcome, {auth.username}</li>
               <li><button onClick={handleLogout}>Logout</button></li>
             </>
+          ) : (
+            <li><Link to="/">Sign in</Link></li>
           )}
         </ul>
       </div>
